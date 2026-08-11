@@ -7,6 +7,7 @@ import { ArrowRight, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -30,20 +31,20 @@ export default function LoginPage() {
 
   return (
     <Card className="glass border-border/60">
-      <CardHeader className="space-y-1 text-center">
+      <CardHeader className="space-y-1 pb-4 text-center">
         <CardTitle className="text-2xl">Welcome back</CardTitle>
         <CardDescription>
           Sign in to continue your research
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
-              placeholder="you@university.edu"
+              placeholder=""
               autoComplete="email"
               required
             />
@@ -52,16 +53,15 @@ export default function LoginPage() {
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Password</Label>
               <Link
-                href="#"
+                href="/forgot-password"
                 className="text-xs text-muted-foreground hover:text-foreground"
               >
                 Forgot password?
               </Link>
             </div>
-            <Input
+            <PasswordInput
               id="password"
-              type="password"
-              placeholder="••••••••"
+              placeholder=""
               autoComplete="current-password"
               required
             />
@@ -79,7 +79,7 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <div className="my-6 flex items-center gap-3">
+        <div className="my-4 flex items-center gap-3">
           <Separator className="flex-1" />
           <span className="text-xs text-muted-foreground">OR</span>
           <Separator className="flex-1" />
@@ -87,7 +87,10 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="font-medium text-violet-300 hover:text-violet-200">
+          <Link
+            href="/signup"
+            className="font-medium text-violet-600 hover:text-violet-700 dark:text-violet-300 dark:hover:text-violet-200"
+          >
             Create one
           </Link>
         </p>

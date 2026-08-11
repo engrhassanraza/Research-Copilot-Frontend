@@ -1,12 +1,14 @@
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { LogoBadge } from "@/components/brand/logo-badge";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV_LINKS = [
-  { label: "Product", href: "#features" },
-  { label: "How it works", href: "#how-it-works" },
-  { label: "Agents", href: "#agents" },
+  { label: "Product", href: "/#features" },
+  { label: "How it works", href: "/#how-it-works" },
+  { label: "Agents", href: "/#agents" },
+  { label: "About", href: "/about" },
 ];
 
 export function Navbar() {
@@ -14,9 +16,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl">
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-lg shadow-violet-950/40">
-            <Sparkles className="h-4 w-4 text-white" />
-          </span>
+          <LogoBadge className="h-8 w-8" />
           <span className="text-base font-semibold tracking-tight">
             Research Copilot
           </span>
@@ -35,6 +35,7 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <Button asChild variant="ghost" size="sm">
             <Link href="/login">Sign in</Link>
           </Button>

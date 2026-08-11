@@ -3,6 +3,7 @@
 import { ChevronDown, Download, Settings2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +39,7 @@ export function Topbar() {
           <Download className="h-4 w-4" />
           Export
         </Button>
+        <ThemeToggle />
       </div>
     </header>
   );

@@ -4,6 +4,38 @@
 
 @layer base {
   :root {
+    --background: 260 30% 99%;
+    --foreground: 262 47% 9%;
+
+    --card: 260 25% 100%;
+    --card-foreground: 262 47% 9%;
+
+    --popover: 260 25% 100%;
+    --popover-foreground: 262 47% 9%;
+
+    --primary: 271 91% 56%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 260 25% 95%;
+    --secondary-foreground: 262 40% 15%;
+
+    --muted: 260 25% 95%;
+    --muted-foreground: 260 15% 40%;
+
+    --accent: 291 84% 52%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 260 20% 88%;
+    --input: 260 20% 90%;
+    --ring: 271 91% 56%;
+
+    --radius: 1rem;
+  }
+
+  .dark {
     --background: 262 47% 5%;
     --foreground: 260 25% 96%;
 
@@ -31,8 +63,6 @@
     --border: 263 24% 19%;
     --input: 263 24% 16%;
     --ring: 271 91% 65%;
-
-    --radius: 1rem;
   }
 }
 
@@ -61,6 +91,14 @@
   .bg-radial-fade {
     background: radial-gradient(
       ellipse 80% 60% at 50% 0%,
+      hsl(271 70% 88% / 0.6),
+      transparent 70%
+    );
+  }
+
+  .dark .bg-radial-fade {
+    background: radial-gradient(
+      ellipse 80% 60% at 50% 0%,
       hsl(271 60% 25% / 0.35),
       transparent 70%
     );
@@ -71,7 +109,11 @@
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-300 via-fuchsia-300 to-violet-200;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-700 via-fuchsia-600 to-violet-800;
+  }
+
+  .dark .text-gradient {
+    @apply from-violet-300 via-fuchsia-300 to-violet-200;
   }
 
   .scrollbar-thin {

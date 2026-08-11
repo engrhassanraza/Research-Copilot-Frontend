@@ -10,11 +10,11 @@ import {
   Network,
   Plus,
   Settings,
-  Sparkles,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { LogoBadge } from "@/components/brand/logo-badge";
 
 const NAV_ITEMS = [
   { label: "Chat", href: "/dashboard", icon: MessageSquare },
@@ -35,9 +35,7 @@ export function Sidebar() {
   return (
     <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-border/60 bg-card/40 backdrop-blur-xl">
       <div className="flex items-center gap-2 px-5 py-5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-lg shadow-violet-950/40">
-          <Sparkles className="h-4 w-4 text-white" />
-        </span>
+        <LogoBadge className="h-8 w-8" />
         <span className="text-sm font-semibold tracking-tight">
           Research Copilot
         </span>
@@ -60,7 +58,7 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-colors",
                 isActive
-                  ? "bg-primary/15 text-violet-200"
+                  ? "bg-primary/15 text-violet-700 dark:text-violet-200"
                   : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
               )}
             >

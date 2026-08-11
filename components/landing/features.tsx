@@ -69,7 +69,7 @@ export function Features() {
               className="group border-border/60 bg-card/60 backdrop-blur transition-colors hover:border-primary/40"
             >
               <CardHeader>
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600/20 to-fuchsia-600/20 text-violet-300 transition-colors group-hover:from-violet-600/30 group-hover:to-fuchsia-600/30">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600/20 to-fuchsia-600/20 text-violet-600 transition-colors group-hover:from-violet-600/30 group-hover:to-fuchsia-600/30 dark:text-violet-300">
                   <feature.icon className="h-5 w-5" />
                 </div>
                 <CardTitle className="pt-2 text-lg">{feature.title}</CardTitle>

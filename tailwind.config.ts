@@ -75,12 +75,27 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-10px)" },
         },
+        "spin-slow": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
+        },
+        "spin-slow-reverse": {
+          from: { transform: "rotate(360deg)" },
+          to: { transform: "rotate(0deg)" },
+        },
+        orbit: {
+          "0%": { transform: "rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg)" },
+          "100%": { transform: "rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "pulse-glow": "pulse-glow 4s ease-in-out infinite",
         float: "float 6s ease-in-out infinite",
+        "spin-slow": "spin-slow 14s linear infinite",
+        "spin-slow-reverse": "spin-slow-reverse 20s linear infinite",
+        orbit: "orbit 10s linear infinite",
       },
     },
   },
