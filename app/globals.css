@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 262 47% 5%;
+    --foreground: 260 25% 96%;
+
+    --card: 264 38% 9%;
+    --card-foreground: 260 20% 95%;
+
+    --popover: 264 40% 8%;
+    --popover-foreground: 260 20% 95%;
+
+    --primary: 271 91% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 263 28% 15%;
+    --secondary-foreground: 260 20% 92%;
+
+    --muted: 263 26% 13%;
+    --muted-foreground: 260 14% 65%;
+
+    --accent: 291 84% 61%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 263 24% 19%;
+    --input: 263 24% 16%;
+    --ring: 271 91% 65%;
+
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "cv11", "ss01";
+    font-variation-settings: normal;
+  }
+}
+
+@layer utilities {
+  .glow-orb {
+    background: radial-gradient(
+      circle at 30% 30%,
+      hsl(271 91% 75% / 0.95),
+      hsl(271 85% 55% / 0.65) 35%,
+      hsl(291 84% 45% / 0.35) 55%,
+      transparent 75%
+    );
+  }
+
+  .bg-radial-fade {
+    background: radial-gradient(
+      ellipse 80% 60% at 50% 0%,
+      hsl(271 60% 25% / 0.35),
+      transparent 70%
+    );
+  }
+
+  .glass {
+    @apply bg-card/60 backdrop-blur-xl border border-border/60;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-300 via-fuchsia-300 to-violet-200;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--border));
+    border-radius: 9999px;
+  }
+}
