@@ -146,11 +146,21 @@ export interface VerificationOutput {
   claims: ClaimVerification[];
 }
 
+export interface EvidenceBlock {
+  evidence_id: string;
+  paper_id: string | null;
+  document_id: UUID;
+  page: number | null;
+  text: string;
+  modalities: string[];
+  confidence: number | null;
+}
+
 export interface ChatResponse {
   conversation_id: UUID;
   answer: string;
   citations: Citation[];
-  evidence: Record<string, unknown>[];
+  evidence: EvidenceBlock[];
   sources: ChatSource[];
   knowledge_graph: { research_gaps?: ResearchGap[] } & Record<string, unknown>;
   verification: VerificationOutput | null;
@@ -391,6 +401,40 @@ export interface ReferenceCreate {
 export type GeneratedDocumentType = "docx" | "pdf";
 
 export interface ExportResponse {
+  id: UUID;
+  type: GeneratedDocumentType;
+  title: string | null;
+  download_url: string;
+}
+
+// ---------------------------------------------------------------------------
+// Manuscripts (workspace editor)
+// ---------------------------------------------------------------------------
+
+// Tiptap/ProseMirror document — opaque to the frontend beyond `type`/`content`.
+export interface TiptapDoc {
+  type: "doc";
+  content: Record<string, unknown>[];
+}
+
+export interface ManuscriptSummary {
+  id: UUID;
+  title: string | null;
+  updated_at: string;
+  created_at: string;
+  has_export: boolean;
+}
+
+export interface Manuscript {
+  id: UUID;
+  project_id: UUID;
+  title: string | null;
+  content_json: TiptapDoc;
+  updated_at: string;
+  created_at: string;
+}
+
+export interface ManuscriptExportResponse {
   id: UUID;
   type: GeneratedDocumentType;
   title: string | null;

@@ -30,7 +30,7 @@ export function MessageBubble({
 }: {
   message: LocalMessage;
   projectId: string;
-  onCiteClick: (citation: Citation) => void;
+  onCiteClick: (citation: Citation, evidence?: LocalMessage["evidence"]) => void;
 }) {
   const isUser = message.role === "user";
   const citationStyle = useChatStore((s) => s.citationStyle);
@@ -90,7 +90,11 @@ export function MessageBubble({
               message.streaming && "border-violet-500/30"
             )}
           >
-            <CitationMarkdown content={message.content} citations={message.citations} onCiteClick={onCiteClick} />
+            <CitationMarkdown
+              content={message.content}
+              citations={message.citations}
+              onCiteClick={(citation) => onCiteClick(citation, message.evidence)}
+            />
             {message.streaming && (
               <span className="ml-0.5 inline-block h-4 w-1.5 animate-pulse rounded-sm bg-violet-500 align-middle" />
             )}

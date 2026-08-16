@@ -16,7 +16,7 @@ import { useChatStream } from "@/hooks/use-chat";
 import { useConversation } from "@/hooks/use-conversations";
 import { useChatStore } from "@/stores/chat-store";
 import * as conversationsApi from "@/services/conversations";
-import type { Citation } from "@/types/api";
+import type { Citation, EvidenceBlock } from "@/types/api";
 
 const SUGGESTIONS = [
   { icon: FileSearch, label: "Summarize my uploaded papers" },
@@ -37,6 +37,7 @@ export function ChatView() {
   const [input, setInput] = useState("");
   const [evidenceOpen, setEvidenceOpen] = useState(false);
   const [activeEvidenceId, setActiveEvidenceId] = useState<string | null>(null);
+  const [activeEvidenceConfidence, setActiveEvidenceConfidence] = useState<number | null>(null);
   const seededFor = useRef<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
@@ -84,6 +85,7 @@ export function ChatView() {
         role: "assistant",
         content: response.answer,
         citations: response.citations,
+        evidence: response.evidence,
         sources: response.sources,
         verification: response.verification,
         pipeline: finishedPipeline,
@@ -167,8 +169,9 @@ export function ChatView() {
     seededFor.current = null;
   }
 
-  function handleCiteClick(citation: Citation) {
+  function handleCiteClick(citation: Citation, evidence?: EvidenceBlock[]) {
     setActiveEvidenceId(citation.evidence_id);
+    setActiveEvidenceConfidence(evidence?.find((e) => e.evidence_id === citation.evidence_id)?.confidence ?? null);
     setEvidenceOpen(true);
   }
 
@@ -262,6 +265,7 @@ export function ChatView() {
       <EvidencePanel
         evidenceId={activeEvidenceId}
         projectId={activeProjectId}
+        confidence={activeEvidenceConfidence}
         open={evidenceOpen}
         onOpenChange={setEvidenceOpen}
       />

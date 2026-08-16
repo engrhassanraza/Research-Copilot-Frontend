@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { FlaskConical, Info, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Download, FileEdit, FlaskConical, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +15,7 @@ import { useActiveProject } from "@/hooks/use-active-project";
 import { useJob, useJobs } from "@/hooks/use-jobs";
 import { useStartLiteratureReview } from "@/hooks/use-literature-review";
 import { authErrorMessage } from "@/hooks/use-auth";
+import * as exportsApi from "@/services/exports";
 import type { CitationStyle } from "@/types/api";
 
 const CITATION_STYLES: { value: CitationStyle; label: string }[] = [
@@ -25,14 +27,29 @@ const CITATION_STYLES: { value: CitationStyle; label: string }[] = [
 ];
 
 export default function LiteratureReviewPage() {
+  const router = useRouter();
   const { activeProjectId, projects, isLoading } = useActiveProject();
   const { data: jobs } = useJobs(activeProjectId);
   const [topic, setTopic] = useState("");
   const [style, setStyle] = useState<CitationStyle>("ieee");
   const [paperCount, setPaperCount] = useState(20);
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState(false);
   const startReview = useStartLiteratureReview(activeProjectId ?? "");
   const { data: activeJob } = useJob(activeJobId, activeProjectId);
+
+  async function handleDownload() {
+    if (!activeJob?.resource_id || !activeProjectId) return;
+    setDownloading(true);
+    try {
+      const result = await exportsApi.getExport(activeJob.resource_id, activeProjectId);
+      window.open(result.download_url, "_blank");
+    } catch (err) {
+      toast.error("Couldn't fetch the download", { description: authErrorMessage(err, "Try again.") });
+    } finally {
+      setDownloading(false);
+    }
+  }
 
   const reviewJobs = jobs?.filter((j) => j.job_type === "literature_review") ?? [];
 
@@ -95,17 +112,17 @@ export default function LiteratureReviewPage() {
       {activeJobId && (
         <div className="mt-8 space-y-3">
           <JobStatusCard jobId={activeJobId} projectId={activeProjectId} label="Literature review" />
-          {activeJob?.status === "succeeded" && (
-            <div className="flex items-start gap-2.5 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-300">
-              <Info className="mt-0.5 h-4 w-4 shrink-0" />
-              <p>
-                Your review document was generated on the server, but the backend doesn&apos;t yet expose a
-                download route for it (tracked as a known gap) — ask your workspace admin to add
-                <code className="mx-1 rounded bg-black/10 px-1 py-0.5 dark:bg-white/10">
-                  GET /literature-review/{"{job_id}"}/result
-                </code>
-                to fetch it from here.
-              </p>
+          {activeJob?.status === "succeeded" && activeJob.resource_type === "generated_document" && activeJob.resource_id && (
+            <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
+              <p className="mr-auto text-sm text-emerald-700 dark:text-emerald-300">Your review document is ready.</p>
+              <Button size="sm" variant="secondary" onClick={handleDownload} disabled={downloading}>
+                {downloading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+                Download DOCX
+              </Button>
+              <Button size="sm" onClick={() => router.push(`/dashboard/write/${activeJob.resource_id}`)}>
+                <FileEdit className="h-3.5 w-3.5" />
+                Open in editor
+              </Button>
             </div>
           )}
         </div>

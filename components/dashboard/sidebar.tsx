@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3,
   BookMarked,
+  FileEdit,
   FileText,
   FlaskConical,
   FolderClosed,
@@ -43,6 +44,7 @@ const NAV_SECTIONS = [
       { label: "Documents", href: "/dashboard/documents", icon: FileText },
       { label: "Search papers", href: "/dashboard/search", icon: Search },
       { label: "Papers", href: "/dashboard/papers", icon: BookMarked },
+      { label: "Write", href: "/dashboard/write", icon: FileEdit },
     ],
   },
   {
@@ -99,7 +101,8 @@ export function Sidebar() {
             </p>
             <div className="mt-1.5 flex flex-col gap-0.5">
               {section.items.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive =
+                  pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(`${item.href}/`));
                 return (
                   <Link
                     key={item.href}
@@ -174,6 +177,12 @@ export function Sidebar() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>{me?.email}</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/settings">
+                <Settings className="h-4 w-4" />
+                Project settings
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
               <LogOut className="h-4 w-4" />
               Sign out

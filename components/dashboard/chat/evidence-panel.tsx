@@ -24,11 +24,13 @@ const TYPE_META: Record<string, { icon: typeof FileText; label: string }> = {
 export function EvidencePanel({
   evidenceId,
   projectId,
+  confidence,
   open,
   onOpenChange,
 }: {
   evidenceId: string | null;
   projectId: string | null;
+  confidence?: number | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
@@ -65,6 +67,9 @@ export function EvidencePanel({
               </Badge>
               {evidence.page !== null && <Badge variant="outline">Page {evidence.page}</Badge>}
               <Badge>{meta.label}</Badge>
+              {confidence !== null && confidence !== undefined && (
+                <Badge variant="outline">{Math.round(Math.min(Math.max(confidence, 0), 1) * 100)}% match</Badge>
+              )}
             </div>
 
             {evidence.image_url && (
