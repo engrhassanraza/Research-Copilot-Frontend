@@ -15,6 +15,7 @@ import {
 import { AgentPipeline } from "@/components/dashboard/chat/agent-pipeline";
 import { CitationMarkdown } from "@/components/dashboard/chat/citation-markdown";
 import { SourceList } from "@/components/dashboard/chat/source-list";
+import { VerificationPanel } from "@/components/dashboard/chat/verification-panel";
 import type { LocalMessage } from "@/components/dashboard/chat/types";
 import { useCreateExport } from "@/hooks/use-exports";
 import { useChatStore } from "@/stores/chat-store";
@@ -97,6 +98,7 @@ export function MessageBubble({
             {!message.streaming && message.sources && message.sources.length > 0 && (
               <SourceList sources={message.sources} projectId={projectId} />
             )}
+            {!message.streaming && <VerificationPanel verification={message.verification} />}
           </div>
         )}
 

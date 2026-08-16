@@ -12,11 +12,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DocumentStatusBadge } from "@/components/dashboard/documents/status-badge";
+import { QueryError } from "@/components/dashboard/query-error";
 import { useDeleteDocument, useDocuments, useReprocessDocument } from "@/hooks/use-documents";
 import { authErrorMessage } from "@/hooks/use-auth";
 
 export function DocumentList({ projectId }: { projectId: string }) {
-  const { data: documents, isLoading } = useDocuments(projectId);
+  const { data: documents, isLoading, isError, error, refetch } = useDocuments(projectId);
   const deleteDocument = useDeleteDocument(projectId);
   const reprocessDocument = useReprocessDocument(projectId);
 
@@ -28,6 +29,10 @@ export function DocumentList({ projectId }: { projectId: string }) {
         ))}
       </div>
     );
+  }
+
+  if (isError) {
+    return <QueryError error={error} onRetry={() => refetch()} />;
   }
 
   if (!documents || documents.length === 0) {

@@ -26,9 +26,17 @@ export function ReferenceRow({
 
   return (
     <div className="glass rounded-2xl border-border/50">
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => setExpanded((v) => !v)}
-        className="flex w-full items-start gap-3 px-4 py-3.5 text-left"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setExpanded((v) => !v);
+          }
+        }}
+        className="flex w-full cursor-pointer items-start gap-3 px-4 py-3.5 text-left"
       >
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium">{reference.title}</p>
@@ -55,7 +63,7 @@ export function ReferenceRow({
           <Trash2 className="h-4 w-4" />
         </Button>
         <ChevronDown className={cn("mt-1.5 h-4 w-4 shrink-0 text-muted-foreground transition-transform", expanded && "rotate-180")} />
-      </button>
+      </div>
       {expanded && (
         <div className="border-t border-border/50 px-4 py-3 text-sm leading-relaxed text-muted-foreground">
           {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : data?.formatted}

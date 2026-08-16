@@ -131,6 +131,21 @@ export interface ChatSource {
   marker: string;
 }
 
+export type ClaimSeverity = "none" | "low" | "medium" | "high";
+
+export interface ClaimVerification {
+  claim: string;
+  supported: boolean;
+  evidence_ids: string[];
+  citation_valid: boolean;
+  problem: string | null;
+  severity: ClaimSeverity;
+}
+
+export interface VerificationOutput {
+  claims: ClaimVerification[];
+}
+
 export interface ChatResponse {
   conversation_id: UUID;
   answer: string;
@@ -138,7 +153,7 @@ export interface ChatResponse {
   evidence: Record<string, unknown>[];
   sources: ChatSource[];
   knowledge_graph: { research_gaps?: ResearchGap[] } & Record<string, unknown>;
-  verification: Record<string, unknown> | null;
+  verification: VerificationOutput | null;
 }
 
 export type AgentNode =

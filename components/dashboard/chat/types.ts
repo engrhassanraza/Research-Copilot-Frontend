@@ -1,4 +1,4 @@
-import type { Citation, ChatSource } from "@/types/api";
+import type { Citation, ChatSource, VerificationOutput } from "@/types/api";
 import type { PipelineNodeState } from "@/stores/chat-store";
 
 export interface LocalMessage {
@@ -7,6 +7,7 @@ export interface LocalMessage {
   content: string;
   citations?: Citation[];
   sources?: ChatSource[];
+  verification?: VerificationOutput | null;
   pipeline?: PipelineNodeState[];
   streaming?: boolean;
   createdAt: number;

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EmptyProjectState } from "@/components/dashboard/empty-project-state";
+import { QueryError } from "@/components/dashboard/query-error";
 import { SearchResultCard } from "@/components/dashboard/search/result-card";
 import { useActiveProject } from "@/hooks/use-active-project";
 import { useCreatePaper } from "@/hooks/use-papers";
@@ -88,6 +89,8 @@ export default function SearchPage() {
             <Loader2 className="h-5 w-5 animate-spin" />
           </div>
         )}
+
+        {search.isError && <QueryError error={search.error} onRetry={() => search.mutate({ query: query.trim(), limit_per_provider: 20 })} />}
 
         {search.isSuccess && search.data.results.length === 0 && (
           <p className="py-10 text-center text-sm text-muted-foreground">No results — try a different query.</p>

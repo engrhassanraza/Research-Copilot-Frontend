@@ -9,6 +9,7 @@ import {
   FlaskConical,
   FolderClosed,
   GitCompareArrows,
+  ImageIcon,
   Lightbulb,
   MessageSquare,
   Network,

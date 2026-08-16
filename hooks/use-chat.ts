@@ -15,7 +15,10 @@ interface SendMessageArgs {
   citationStyle?: CitationStyle;
 }
 
-export function useChatStream(onFinal?: (response: ChatResponse, conversationId: string) => void) {
+export function useChatStream(
+  onFinal?: (response: ChatResponse, conversationId: string) => void,
+  onStreamError?: (message: string) => void
+) {
   const queryClient = useQueryClient();
   const { start, pushNode, finish, fail } = useChatStore();
   const controllerRef = useRef<AbortController | null>(null);
@@ -42,10 +45,11 @@ export function useChatStream(onFinal?: (response: ChatResponse, conversationId:
               queryClient.invalidateQueries({ queryKey: ["conversations", projectId] });
               onFinal?.(response, resolvedConversationId || response.conversation_id);
             },
-            onError: (error) => {
-              fail(error.message);
-              toast.error("Chat failed", { description: error.message });
-            },
+            // Deliberately no onError here — every error path in streamChat
+            // (connect failure, non-2xx, mid-stream break, no `final`
+            // received) re-throws, so the single catch below is the one
+            // place that reacts. Handling it here too would double-fire
+            // the toast and the store update.
           },
           controller.signal
         );
@@ -54,10 +58,11 @@ export function useChatStream(onFinal?: (response: ChatResponse, conversationId:
           const message = error instanceof Error ? error.message : "Chat request failed";
           fail(message);
           toast.error("Chat failed", { description: message });
+          onStreamError?.(message);
         }
       }
     },
-    [start, pushNode, finish, fail, queryClient, onFinal]
+    [start, pushNode, finish, fail, queryClient, onFinal, onStreamError]
   );
 
   const stop = useCallback(() => {

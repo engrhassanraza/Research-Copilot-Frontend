@@ -42,10 +42,15 @@ export function CostChart({ data }: { data: ModelUsageSummary[] }) {
               borderRadius: 12,
               fontSize: 12,
             }}
-            formatter={(value: number) => [`$${value}`, "Cost"]}
+            formatter={(value?: unknown) => [`$${Number(value ?? 0)}`, "Cost"]}
           />
           <Bar dataKey="cost" radius={[6, 6, 0, 0]} maxBarSize={56}>
-            <LabelList dataKey="cost" position="top" style={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} formatter={(v: number) => `$${v}`} />
+            <LabelList
+              dataKey="cost"
+              position="top"
+              style={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+              formatter={(v?: unknown) => `$${Number(v ?? 0)}`}
+            />
             {chartData.map((entry, index) => (
               // eslint-disable-next-line react/no-array-index-key
               <Cell key={index} fill={entry.color} />

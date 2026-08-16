@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyProjectState } from "@/components/dashboard/empty-project-state";
+import { QueryError } from "@/components/dashboard/query-error";
 import { JobStatusCard } from "@/components/dashboard/jobs/job-status-card";
 import { useActiveProject } from "@/hooks/use-active-project";
 import { useStartComparison } from "@/hooks/use-comparisons";
@@ -51,7 +52,7 @@ function ComparisonResultView({ result }: { result: ComparisonResult }) {
 
 export default function ComparisonsPage() {
   const { activeProjectId, projects, isLoading } = useActiveProject();
-  const { data: papers, isLoading: papersLoading } = usePapers(activeProjectId);
+  const { data: papers, isLoading: papersLoading, isError: papersError, error: papersErrorObj, refetch: refetchPapers } = usePapers(activeProjectId);
   const { data: jobs } = useJobs(activeProjectId);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [question, setQuestion] = useState("");
@@ -109,7 +110,8 @@ export default function ComparisonsPage() {
         />
 
         {papersLoading && <Skeleton className="h-40 w-full" />}
-        {!papersLoading && (papers?.length ?? 0) === 0 && (
+        {papersError && <QueryError error={papersErrorObj} onRetry={() => refetchPapers()} />}
+        {!papersLoading && !papersError && (papers?.length ?? 0) === 0 && (
           <p className="text-sm text-muted-foreground">Add papers to this project before comparing.</p>
         )}
 

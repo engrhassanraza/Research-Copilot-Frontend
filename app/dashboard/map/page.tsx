@@ -6,6 +6,7 @@ import { FileSearch, Workflow } from "lucide-react";
 
 import { EmptyProjectState } from "@/components/dashboard/empty-project-state";
 import { GraphLegend } from "@/components/dashboard/graph/graph-legend";
+import { QueryError } from "@/components/dashboard/query-error";
 import { EvidencePanel } from "@/components/dashboard/chat/evidence-panel";
 import {
   Sheet,
@@ -26,7 +27,7 @@ const KnowledgeMapCanvas = dynamic(
 
 export default function KnowledgeMapPage() {
   const { activeProjectId, projects, isLoading: projectLoading } = useActiveProject();
-  const { data: map, isLoading } = useKnowledgeMap(activeProjectId);
+  const { data: map, isLoading, isError, error, refetch } = useKnowledgeMap(activeProjectId);
   const [chunkIds, setChunkIds] = useState<string[]>([]);
   const [chunksOpen, setChunksOpen] = useState(false);
   const [evidenceChunkId, setEvidenceChunkId] = useState<string | null>(null);
@@ -56,14 +57,20 @@ export default function KnowledgeMapPage() {
           </div>
         )}
 
-        {!isLoading && map && map.roots.length === 0 && (
+        {isError && (
+          <div className="flex h-full items-center justify-center p-6">
+            <QueryError error={error} onRetry={() => refetch()} className="max-w-md" />
+          </div>
+        )}
+
+        {!isLoading && !isError && map && map.roots.length === 0 && (
           <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
             <Workflow className="h-8 w-8 text-muted-foreground/40" />
             <p className="text-sm text-muted-foreground">No map yet — upload and process a document first.</p>
           </div>
         )}
 
-        {!isLoading && map && map.roots.length > 0 && (
+        {!isLoading && !isError && map && map.roots.length > 0 && (
           <KnowledgeMapCanvas
             map={map}
             onSelectNode={(ids) => {

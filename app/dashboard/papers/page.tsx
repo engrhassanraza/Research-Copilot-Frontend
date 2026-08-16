@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyProjectState } from "@/components/dashboard/empty-project-state";
+import { QueryError } from "@/components/dashboard/query-error";
 import { useActiveProject } from "@/hooks/use-active-project";
 import { useDeletePaper, usePapers } from "@/hooks/use-papers";
 import { authErrorMessage } from "@/hooks/use-auth";
@@ -16,7 +17,7 @@ const SOURCE_LABEL: Record<string, string> = { upload: "Uploaded", search: "Sear
 
 export default function PapersPage() {
   const { activeProjectId, projects, isLoading } = useActiveProject();
-  const { data: papers, isLoading: papersLoading } = usePapers(activeProjectId);
+  const { data: papers, isLoading: papersLoading, isError: papersError, error: papersErrorObj, refetch: refetchPapers } = usePapers(activeProjectId);
   const deletePaper = useDeletePaper(activeProjectId ?? "");
 
   if (isLoading) return null;
@@ -45,7 +46,9 @@ export default function PapersPage() {
         {papersLoading &&
           Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
 
-        {!papersLoading && (papers?.length ?? 0) === 0 && (
+        {papersError && <QueryError error={papersErrorObj} onRetry={() => refetchPapers()} />}
+
+        {!papersLoading && !papersError && (papers?.length ?? 0) === 0 && (
           <div className="flex flex-col items-center gap-2 rounded-3xl border border-dashed border-border/60 py-14 text-center">
             <BookMarked className="h-6 w-6 text-muted-foreground/50" />
             <p className="text-sm text-muted-foreground">No papers yet — upload a PDF or search to add some.</p>

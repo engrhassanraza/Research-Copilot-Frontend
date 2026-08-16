@@ -48,10 +48,15 @@ export async function apiFetch<T>(path: string, init: ApiFetchInit = {}): Promis
     finalHeaders.set("Authorization", `Bearer ${token}`);
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/v1${path}`, {
-    ...rest,
-    headers: finalHeaders,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/api/v1${path}`, {
+      ...rest,
+      headers: finalHeaders,
+    });
+  } catch {
+    throw new ApiError(0, null, `Can't reach the server at ${API_BASE_URL} — check your connection or try again.`);
+  }
 
   if (response.status === 401 && !skipAuth) {
     handleUnauthorized();

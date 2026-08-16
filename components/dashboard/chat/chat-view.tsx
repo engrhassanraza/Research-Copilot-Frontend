@@ -85,6 +85,7 @@ export function ChatView() {
         content: response.answer,
         citations: response.citations,
         sources: response.sources,
+        verification: response.verification,
         pipeline: finishedPipeline,
         streaming: false,
         createdAt: Date.now(),
@@ -97,6 +98,21 @@ export function ChatView() {
     setConversationId(resolvedConversationId);
     seededFor.current = resolvedConversationId;
     queryClient.invalidateQueries({ queryKey: ["conversations", activeProjectId] });
+  }, (errorMessage) => {
+    // The toast already surfaced this — finalize the stuck placeholder
+    // bubble so it doesn't sit frozen mid-"streaming" forever.
+    setMessages((prev) => {
+      const next = [...prev];
+      const idx = next.findIndex((m) => m.streaming);
+      if (idx === -1) return prev;
+      next[idx] = {
+        ...next[idx],
+        streaming: false,
+        content: next[idx].content || `_Something went wrong: ${errorMessage}_`,
+        pipeline: useChatStore.getState().pipeline,
+      };
+      return next;
+    });
   });
 
   useEffect(() => {

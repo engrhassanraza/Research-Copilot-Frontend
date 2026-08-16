@@ -8,22 +8,26 @@ export interface ChatRequestBody {
   citation_style?: CitationStyle;
 }
 
-export function sendChat(projectId: string, body: ChatRequestBody) {
+export async function sendChat(projectId: string, body: ChatRequestBody): Promise<ChatResponse> {
   const token = useAuthStore.getState().token;
-  return fetch(`${API_BASE_URL}/api/v1/chat${buildQuery({ project_id: projectId })}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify(body),
-  }).then(async (res) => {
-    if (!res.ok) {
-      const detail = await res.json().catch(() => null);
-      throw new ApiError(res.status, detail, "Chat request failed");
-    }
-    return res.json() as Promise<ChatResponse>;
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE_URL}/api/v1/chat${buildQuery({ project_id: projectId })}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw new ApiError(0, null, `Can't reach the server at ${API_BASE_URL} — check your connection or try again.`);
+  }
+  if (!res.ok) {
+    const detail = await res.json().catch(() => null);
+    throw new ApiError(res.status, detail, "Chat request failed");
+  }
+  return res.json() as Promise<ChatResponse>;
 }
 
 export type ChatStreamEvent =
@@ -51,16 +55,22 @@ export async function streamChat(
 ): Promise<void> {
   const token = useAuthStore.getState().token;
 
-  const response = await fetch(`${API_BASE_URL}/api/v1/chat/stream${buildQuery({ project_id: projectId })}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "text/event-stream",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify(body),
-    signal,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/api/v1/chat/stream${buildQuery({ project_id: projectId })}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "text/event-stream",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(body),
+      signal,
+    });
+  } catch (error) {
+    if ((error as Error).name === "AbortError") throw error;
+    throw new ApiError(0, null, `Can't reach the server at ${API_BASE_URL} — check your connection or try again.`);
+  }
 
   if (!response.ok || !response.body) {
     const detail = await response.json().catch(() => null);
@@ -70,6 +80,7 @@ export async function streamChat(
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
+  let receivedFinal = false;
 
   const dispatch = (eventName: string, dataRaw: string) => {
     if (!dataRaw) return;
@@ -84,6 +95,7 @@ export async function streamChat(
     } else if (eventName === "node") {
       handlers.onNode?.((parsed as { node: string }).node);
     } else if (eventName === "final") {
+      receivedFinal = true;
       handlers.onFinal?.(parsed as ChatResponse);
     }
   };
@@ -116,6 +128,18 @@ export async function streamChat(
     if ((error as Error).name !== "AbortError") {
       handlers.onError?.(error as Error);
     }
+    throw error;
+  }
+
+  // The HTTP response starts (200 + headers) before the graph runs, so a
+  // failure mid-stream (e.g. Qdrant/Neo4j unreachable) closes the
+  // connection cleanly from the server's side rather than surfacing as an
+  // HTTP error — `reader.read()` just resolves `done: true` with no
+  // exception. Without this check the caller sees a silently "successful"
+  // stream that never produced an answer, leaving the UI stuck streaming.
+  if (!receivedFinal) {
+    const error = new Error("The connection closed before the assistant finished responding. Please try again.");
+    handlers.onError?.(error);
     throw error;
   }
 }

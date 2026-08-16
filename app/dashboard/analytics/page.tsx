@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { EmptyProjectState } from "@/components/dashboard/empty-project-state";
+import { QueryError } from "@/components/dashboard/query-error";
 import { CostChart } from "@/components/dashboard/analytics/cost-chart";
 import { StatTile } from "@/components/dashboard/analytics/stat-tile";
 import { useActiveProject } from "@/hooks/use-active-project";
@@ -19,11 +20,19 @@ import { useAnalytics } from "@/hooks/use-analytics";
 
 export default function AnalyticsPage() {
   const { activeProjectId, projects, isLoading } = useActiveProject();
-  const { data: analytics, isLoading: analyticsLoading } = useAnalytics(activeProjectId);
+  const { data: analytics, isLoading: analyticsLoading, isError, error, refetch } = useAnalytics(activeProjectId);
 
   if (isLoading) return null;
   if (projects.length === 0 || !activeProjectId) {
     return <EmptyProjectState description="Model usage, cost, and retrieval latency for this project show up here." />;
+  }
+
+  if (isError) {
+    return (
+      <div className="mx-auto max-w-4xl px-6 py-10">
+        <QueryError error={error} onRetry={() => refetch()} />
+      </div>
+    );
   }
 
   if (analyticsLoading || !analytics) {

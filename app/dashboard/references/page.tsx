@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyProjectState } from "@/components/dashboard/empty-project-state";
 import { AddReferenceDialog } from "@/components/dashboard/references/add-reference-dialog";
 import { ReferenceRow } from "@/components/dashboard/references/reference-row";
+import { QueryError } from "@/components/dashboard/query-error";
 import { useActiveProject } from "@/hooks/use-active-project";
 import { useReferences } from "@/hooks/use-references";
 import { authErrorMessage } from "@/hooks/use-auth";
@@ -27,7 +28,7 @@ const CITATION_STYLES: { value: CitationStyle; label: string }[] = [
 
 export default function ReferencesPage() {
   const { activeProjectId, projects, isLoading } = useActiveProject();
-  const { data: references, isLoading: referencesLoading } = useReferences(activeProjectId);
+  const { data: references, isLoading: referencesLoading, isError: referencesError, error: referencesErrorObj, refetch: refetchReferences } = useReferences(activeProjectId);
   const [style, setStyle] = useState<CitationStyle>("ieee");
   const [exporting, setExporting] = useState<"bibtex" | "ris" | null>(null);
 
@@ -85,7 +86,9 @@ export default function ReferencesPage() {
       <div className="mt-6 flex flex-col gap-2">
         {referencesLoading && Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}
 
-        {!referencesLoading && (references?.length ?? 0) === 0 && (
+        {referencesError && <QueryError error={referencesErrorObj} onRetry={() => refetchReferences()} />}
+
+        {!referencesLoading && !referencesError && (references?.length ?? 0) === 0 && (
           <div className="flex flex-col items-center gap-2 rounded-3xl border border-dashed border-border/60 py-14 text-center">
             <BookMarked className="h-6 w-6 text-muted-foreground/50" />
             <p className="text-sm text-muted-foreground">No references yet.</p>
