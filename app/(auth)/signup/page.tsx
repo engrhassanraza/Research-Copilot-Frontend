@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { AlertCircle, ArrowRight, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,16 +15,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { authErrorMessage, useRegister } from "@/hooks/use-auth";
+
+const MAX_PASSWORD_BYTES = 72;
 
 export default function SignupPage() {
-  const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const register = useRegister();
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const passwordTooLong = new TextEncoder().encode(password).length > MAX_PASSWORD_BYTES;
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setIsSubmitting(true);
-    // TODO: wire up to POST /api/v1/auth/register once the endpoint exists.
-    router.push("/dashboard");
+    if (passwordTooLong) return;
+    register.mutate({ email, password, full_name: fullName || undefined });
   }
 
   return (
@@ -38,17 +43,31 @@ export default function SignupPage() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-3">
+          {register.isError && (
+            <div className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-3.5 py-2.5 text-sm text-destructive">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>{authErrorMessage(register.error, "Unable to create your account.")}</span>
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="name">Full name</Label>
-            <Input id="name" placeholder="Enter Your Name ..." autoComplete="name" required />
+            <Input
+              id="name"
+              placeholder="Enter your name…"
+              autoComplete="name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
-              placeholder="Enter Your Email ..."
+              placeholder="Enter your email…"
               autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -59,12 +78,17 @@ export default function SignupPage() {
               placeholder="At least 8 characters"
               autoComplete="new-password"
               minLength={8}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
+            {passwordTooLong && (
+              <p className="text-xs text-destructive">Password must be 72 bytes or fewer.</p>
+            )}
           </div>
 
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? (
+          <Button type="submit" className="w-full" disabled={register.isPending || passwordTooLong}>
+            {register.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <>

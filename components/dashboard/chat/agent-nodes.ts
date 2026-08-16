@@ -1,0 +1,44 @@
+import type { LucideIcon } from "lucide-react";
+import {
+  Database,
+  Eye,
+  Lightbulb,
+  Microscope,
+  Network,
+  PenLine,
+  Quote,
+  ScanSearch,
+  ShieldCheck,
+  Wand2,
+  Waypoints,
+} from "lucide-react";
+
+export interface AgentNodeMeta {
+  label: string;
+  description: string;
+  icon: LucideIcon;
+}
+
+export const AGENT_NODE_META: Record<string, AgentNodeMeta> = {
+  router: { label: "Routing", description: "Classifying question complexity", icon: Waypoints },
+  query_rewrite: { label: "Rewriting query", description: "Optimizing for retrieval", icon: Wand2 },
+  retrieval: { label: "Retrieving evidence", description: "Hybrid search over your papers", icon: Database },
+  search: { label: "Searching literature", description: "Scanning external providers", icon: ScanSearch },
+  vision: { label: "Reading figures", description: "Interpreting charts & tables", icon: Eye },
+  graph_context: { label: "Querying knowledge graph", description: "Pulling entity relationships", icon: Network },
+  research_analysis: { label: "Analyzing findings", description: "Synthesizing across papers", icon: Microscope },
+  research_gap: { label: "Finding research gaps", description: "Spotting open problems", icon: Lightbulb },
+  writing: { label: "Writing answer", description: "Drafting the response", icon: PenLine },
+  citation: { label: "Attaching citations", description: "Linking evidence to claims", icon: Quote },
+  verification: { label: "Verifying claims", description: "Cross-checking the draft", icon: ShieldCheck },
+};
+
+export function nodeMeta(node: string): AgentNodeMeta {
+  return (
+    AGENT_NODE_META[node] ?? {
+      label: node.replace(/_/g, " "),
+      description: "Working…",
+      icon: Waypoints,
+    }
+  );
+}

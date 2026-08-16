@@ -1,0 +1,17 @@
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+type ProjectState = {
+  activeProjectId: string | null;
+  setActiveProjectId: (id: string | null) => void;
+};
+
+export const useProjectStore = create<ProjectState>()(
+  persist(
+    (set) => ({
+      activeProjectId: null,
+      setActiveProjectId: (id) => set({ activeProjectId: id }),
+    }),
+    { name: "research-copilot-project" }
+  )
+);
