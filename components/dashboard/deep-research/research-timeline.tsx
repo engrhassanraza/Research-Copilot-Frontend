@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Check, Loader2, Sparkles, Users } from "lucide-react";
+import { AlertTriangle, Check, Loader2, Repeat, Sparkles, Users } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useJob } from "@/hooks/use-jobs";
@@ -33,6 +33,12 @@ export function ResearchTimeline({ jobId, projectId }: { jobId: string; projectI
       <div className="mb-3 flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
         <Sparkles className="h-3.5 w-3.5 text-violet-500" />
         Research timeline
+        {!!progress?.followup_rounds_run && (
+          <span className="flex items-center gap-1 normal-case text-muted-foreground/80">
+            <Repeat className="h-3 w-3" />
+            {progress.followup_rounds_run} follow-up round{progress.followup_rounds_run === 1 ? "" : "s"}
+          </span>
+        )}
         {isActive && (
           <span className="ml-auto flex items-center gap-1.5 normal-case text-violet-500">
             <span className="relative flex h-1.5 w-1.5">
@@ -43,6 +49,13 @@ export function ResearchTimeline({ jobId, projectId }: { jobId: string; projectI
           </span>
         )}
       </div>
+
+      {progress?.research_brief && (
+        <div className="mb-3 rounded-xl border border-violet-500/20 bg-violet-500/5 px-3 py-2.5 text-xs leading-relaxed text-foreground/80">
+          <p className="mb-1 font-medium uppercase tracking-wider text-[10px] text-violet-500">Research brief</p>
+          {progress.research_brief}
+        </div>
+      )}
 
       <ol className="flex flex-col gap-0.5">
         {events.map((event, idx) => {

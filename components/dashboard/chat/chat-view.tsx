@@ -93,6 +93,8 @@ export function ChatView() {
         verification: response.verification,
         routing: response.routing,
         qualityScore: response.quality_score,
+        mode: response.mode,
+        diagram: response.diagram,
         pipeline: finishedPipeline,
         streaming: false,
         createdAt: Date.now(),
@@ -130,14 +132,6 @@ export function ChatView() {
     const raw = (overrideText ?? input).trim();
     if (!activeProjectId || !raw || isStreaming) return;
 
-    // Learn a Topic (landing page mode) reuses the plain chat pipeline —
-    // no dedicated backend mode — by prefixing a pedagogical instruction
-    // before sending, while the user's bubble still shows just the topic
-    // they typed.
-    const outgoing = learnMode
-      ? `Explain "${raw}" from the ground up: define the key concepts, walk through the core methods, and show how they connect. Assume I'm new to this topic.`
-      : raw;
-
     const userMessage: LocalMessage = { id: tempId(), role: "user", content: raw, streaming: false, createdAt: Date.now() };
     const assistantPlaceholder: LocalMessage = {
       id: tempId(),
@@ -149,7 +143,17 @@ export function ChatView() {
     };
     setMessages((prev) => [...prev, userMessage, assistantPlaceholder]);
     setInput("");
-    sendMessage({ projectId: activeProjectId, conversationId, message: outgoing, citationStyle });
+    // Learn a Topic (landing page mode): send the topic as-is plus an
+    // explicit mode, and let the backend's Explainer agent handle the
+    // pedagogical framing — previously this prefixed a client-side
+    // instruction string onto the message with no backend awareness at all.
+    sendMessage({
+      projectId: activeProjectId,
+      conversationId,
+      message: raw,
+      citationStyle,
+      mode: learnMode ? "learn" : undefined,
+    });
   }
 
   function handleStop() {

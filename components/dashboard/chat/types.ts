@@ -1,4 +1,4 @@
-import type { Citation, ChatSource, EvidenceBlock, QualityScore, RoutingDecision, VerificationOutput } from "@/types/api";
+import type { ChatMode, Citation, ChatSource, DiagramResult, EvidenceBlock, QualityScore, RoutingDecision, VerificationOutput } from "@/types/api";
 import type { PipelineNodeState } from "@/stores/chat-store";
 
 export interface LocalMessage {
@@ -11,6 +11,8 @@ export interface LocalMessage {
   verification?: VerificationOutput | null;
   routing?: RoutingDecision | null;
   qualityScore?: QualityScore | null;
+  mode?: ChatMode;
+  diagram?: DiagramResult | null;
   pipeline?: PipelineNodeState[];
   streaming?: boolean;
   createdAt: number;

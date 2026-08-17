@@ -1,12 +1,18 @@
 import { API_BASE_URL, ApiError, buildQuery } from "@/services/api";
 import { consumeSSE } from "@/services/sse";
 import { useAuthStore } from "@/stores/auth-store";
-import type { ChatResponse, CitationStyle } from "@/types/api";
+import type { ChatMode, ChatResponse, CitationStyle } from "@/types/api";
 
 export interface ChatRequestBody {
   conversation_id?: string | null;
   message: string;
   citation_style?: CitationStyle;
+  // Orchestrator mode override — omit to let the backend auto-classify.
+  // domain_filter has no dedicated UI control yet (no domain taxonomy
+  // exists in the product today); the field is plumbed through so a
+  // caller can pass one once that UI exists.
+  mode?: ChatMode;
+  domain_filter?: string;
 }
 
 export async function sendChat(projectId: string, body: ChatRequestBody): Promise<ChatResponse> {
@@ -33,11 +39,13 @@ export async function sendChat(projectId: string, body: ChatRequestBody): Promis
 
 export type ChatStreamEvent =
   | { event: "conversation"; data: { conversation_id: string } }
+  | { event: "mode"; data: { mode: ChatMode } }
   | { event: "node"; data: { node: string } }
   | { event: "final"; data: ChatResponse };
 
 export interface StreamChatHandlers {
   onConversation?: (conversationId: string) => void;
+  onMode?: (mode: ChatMode) => void;
   onNode?: (node: string) => void;
   onFinal?: (response: ChatResponse) => void;
   onError?: (error: Error) => void;
@@ -64,6 +72,8 @@ export async function streamChat(
         }
         if (eventName === "conversation") {
           handlers.onConversation?.((parsed as { conversation_id: string }).conversation_id);
+        } else if (eventName === "mode") {
+          handlers.onMode?.((parsed as { mode: ChatMode }).mode);
         } else if (eventName === "node") {
           handlers.onNode?.((parsed as { node: string }).node);
         } else if (eventName === "final") {

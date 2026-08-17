@@ -6,13 +6,15 @@ import { toast } from "sonner";
 
 import { streamChat } from "@/services/chat";
 import { useChatStore } from "@/stores/chat-store";
-import type { ChatResponse, CitationStyle } from "@/types/api";
+import type { ChatMode, ChatResponse, CitationStyle } from "@/types/api";
 
 interface SendMessageArgs {
   projectId: string;
   conversationId: string | null;
   message: string;
   citationStyle?: CitationStyle;
+  mode?: ChatMode;
+  domainFilter?: string;
 }
 
 export function useChatStream(
@@ -24,7 +26,7 @@ export function useChatStream(
   const controllerRef = useRef<AbortController | null>(null);
 
   const sendMessage = useCallback(
-    async ({ projectId, conversationId, message, citationStyle = "ieee" }: SendMessageArgs) => {
+    async ({ projectId, conversationId, message, citationStyle = "ieee", mode, domainFilter }: SendMessageArgs) => {
       const controller = new AbortController();
       controllerRef.current = controller;
       start(conversationId);
@@ -34,7 +36,7 @@ export function useChatStream(
       try {
         await streamChat(
           projectId,
-          { conversation_id: conversationId ?? undefined, message, citation_style: citationStyle },
+          { conversation_id: conversationId ?? undefined, message, citation_style: citationStyle, mode, domain_filter: domainFilter },
           {
             onConversation: (id) => {
               resolvedConversationId = id;

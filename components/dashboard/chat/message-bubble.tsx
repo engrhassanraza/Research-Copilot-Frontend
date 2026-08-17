@@ -18,6 +18,7 @@ import { RoutingDecisionPanel } from "@/components/dashboard/chat/routing-decisi
 import { SourceList } from "@/components/dashboard/chat/source-list";
 import { VerificationPanel } from "@/components/dashboard/chat/verification-panel";
 import { QualityScorePanel } from "@/components/dashboard/quality-score-panel";
+import { MermaidRenderer } from "@/components/dashboard/figures/mermaid-renderer";
 import type { LocalMessage } from "@/components/dashboard/chat/types";
 import { useCreateExport } from "@/hooks/use-exports";
 import { useChatStore } from "@/stores/chat-store";
@@ -99,6 +100,12 @@ export function MessageBubble({
             />
             {message.streaming && (
               <span className="ml-0.5 inline-block h-4 w-1.5 animate-pulse rounded-sm bg-violet-500 align-middle" />
+            )}
+
+            {!message.streaming && message.diagram?.valid && message.diagram.source && (
+              <div className="mt-3 rounded-2xl border border-border/50 bg-secondary/20 p-2">
+                <MermaidRenderer source={message.diagram.source} />
+              </div>
             )}
 
             {!message.streaming && message.sources && message.sources.length > 0 && (

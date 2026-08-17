@@ -3,13 +3,12 @@ import {
   Database,
   Eye,
   Gauge,
+  GraduationCap,
   Lightbulb,
   Microscope,
   Network,
   PenLine,
-  Quote,
   ScanSearch,
-  ShieldCheck,
   Wand2,
   Waypoints,
 } from "lucide-react";
@@ -29,9 +28,10 @@ export const AGENT_NODE_META: Record<string, AgentNodeMeta> = {
   graph_context: { label: "Querying knowledge graph", description: "Pulling entity relationships", icon: Network },
   research_analysis: { label: "Analyzing findings", description: "Synthesizing across papers", icon: Microscope },
   research_gap: { label: "Finding research gaps", description: "Spotting open problems", icon: Lightbulb },
-  writing: { label: "Writing answer", description: "Drafting the response", icon: PenLine },
-  citation: { label: "Attaching citations", description: "Linking evidence to claims", icon: Quote },
-  verification: { label: "Verifying claims", description: "Cross-checking the draft", icon: ShieldCheck },
+  // Draft -> Cite -> Verify -> Format all run as one Writing agent step now
+  // (citation/verification are no longer separate graph nodes).
+  writing: { label: "Writing, citing & verifying", description: "Drafting, citing, and cross-checking the answer", icon: PenLine },
+  explain: { label: "Explaining", description: "Building a ground-up walkthrough", icon: GraduationCap },
   quality_score: { label: "Scoring quality", description: "Computing the Research Quality Score", icon: Gauge },
 };
 

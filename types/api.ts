@@ -156,6 +156,20 @@ export interface EvidenceBlock {
   confidence: number | null;
 }
 
+// Orchestrator-resolved mode (Aligned Multi-Agent Architecture proposal §2).
+export type ChatMode = "deep_research" | "learn" | "query_kb" | "visual";
+
+// Visual agent's draw-mode result (app/exports/diagrams.py's
+// generate_verified_mermaid, surfaced via ChatResponse.diagram when the
+// Explainer agent attaches a concept-progression diagram).
+export interface DiagramResult {
+  source: string;
+  valid: boolean;
+  attempts: number;
+  fixes_applied: number;
+  errors: string[];
+}
+
 export interface ChatResponse {
   conversation_id: UUID;
   answer: string;
@@ -166,6 +180,8 @@ export interface ChatResponse {
   verification: VerificationOutput | null;
   routing: RoutingDecision | null;
   quality_score: QualityScore | null;
+  mode: ChatMode;
+  diagram: DiagramResult | null;
 }
 
 export type AgentNode =
@@ -178,8 +194,8 @@ export type AgentNode =
   | "research_analysis"
   | "research_gap"
   | "writing"
-  | "citation"
-  | "verification";
+  | "explain"
+  | "quality_score";
 
 // ---------------------------------------------------------------------------
 // Conversations
@@ -525,4 +541,6 @@ export interface DeepResearchProgress {
   routing?: RoutingDecision;
   worker_count?: number;
   sub_questions?: string[];
+  research_brief?: string;
+  followup_rounds_run?: number;
 }
