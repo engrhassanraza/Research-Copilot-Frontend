@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BarChart3, Clock, Coins, Search } from "lucide-react";
+import { Activity, BarChart3, Clock, Coins, Search, TrendingDown } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -64,7 +64,7 @@ export default function AnalyticsPage() {
       </h1>
       <p className="mt-1 text-sm text-muted-foreground">Model usage, cost, and retrieval performance for this project.</p>
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
         <StatTile icon={Activity} label="Model calls" value={totalCalls.toLocaleString()} sublabel={totalErrors > 0 ? `${totalErrors} errors` : "No errors"} />
         <StatTile icon={Coins} label="Total cost" value={`$${totalCost.toFixed(4)}`} />
         <StatTile icon={Clock} label="Avg latency" value={`${Math.round(avgLatency)} ms`} />
@@ -73,6 +73,12 @@ export default function AnalyticsPage() {
           label="Retrieval queries"
           value={analytics.retrieval.total_queries.toLocaleString()}
           sublabel={`${Math.round(analytics.retrieval.avg_latency_ms)} ms avg`}
+        />
+        <StatTile
+          icon={TrendingDown}
+          label="Router savings"
+          value={`$${analytics.total_estimated_savings_usd.toFixed(4)}`}
+          sublabel={`vs. ${analytics.routed_calls_with_alternative} costlier alternative${analytics.routed_calls_with_alternative === 1 ? "" : "s"}`}
         />
       </div>
 

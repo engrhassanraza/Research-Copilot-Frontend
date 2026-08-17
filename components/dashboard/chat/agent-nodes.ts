@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   Database,
   Eye,
+  Gauge,
   Lightbulb,
   Microscope,
   Network,
@@ -31,6 +32,7 @@ export const AGENT_NODE_META: Record<string, AgentNodeMeta> = {
   writing: { label: "Writing answer", description: "Drafting the response", icon: PenLine },
   citation: { label: "Attaching citations", description: "Linking evidence to claims", icon: Quote },
   verification: { label: "Verifying claims", description: "Cross-checking the draft", icon: ShieldCheck },
+  quality_score: { label: "Scoring quality", description: "Computing the Research Quality Score", icon: Gauge },
 };
 
 export function nodeMeta(node: string): AgentNodeMeta {

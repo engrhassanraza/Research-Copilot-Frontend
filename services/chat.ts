@@ -1,4 +1,5 @@
 import { API_BASE_URL, ApiError, buildQuery } from "@/services/api";
+import { consumeSSE } from "@/services/sse";
 import { useAuthStore } from "@/stores/auth-store";
 import type { ChatResponse, CitationStyle } from "@/types/api";
 
@@ -42,94 +43,38 @@ export interface StreamChatHandlers {
   onError?: (error: Error) => void;
 }
 
-/**
- * SSE-over-POST: EventSource can't send a POST body, so this parses the
- * `text/event-stream` response of `POST /chat/stream` by hand — buffering
- * decoded chunks and splitting on blank-line-delimited event blocks.
- */
 export async function streamChat(
   projectId: string,
   body: ChatRequestBody,
   handlers: StreamChatHandlers,
   signal?: AbortSignal
 ): Promise<void> {
-  const token = useAuthStore.getState().token;
-
-  let response: Response;
-  try {
-    response = await fetch(`${API_BASE_URL}/api/v1/chat/stream${buildQuery({ project_id: projectId })}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "text/event-stream",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify(body),
-      signal,
-    });
-  } catch (error) {
-    if ((error as Error).name === "AbortError") throw error;
-    throw new ApiError(0, null, `Can't reach the server at ${API_BASE_URL} — check your connection or try again.`);
-  }
-
-  if (!response.ok || !response.body) {
-    const detail = await response.json().catch(() => null);
-    throw new ApiError(response.status, detail, "Chat stream failed to start");
-  }
-
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
   let receivedFinal = false;
 
-  const dispatch = (eventName: string, dataRaw: string) => {
-    if (!dataRaw) return;
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(dataRaw);
-    } catch {
-      return;
-    }
-    if (eventName === "conversation") {
-      handlers.onConversation?.((parsed as { conversation_id: string }).conversation_id);
-    } else if (eventName === "node") {
-      handlers.onNode?.((parsed as { node: string }).node);
-    } else if (eventName === "final") {
-      receivedFinal = true;
-      handlers.onFinal?.(parsed as ChatResponse);
-    }
-  };
-
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-
-      let boundary = buffer.indexOf("\n\n");
-      while (boundary !== -1) {
-        const rawEvent = buffer.slice(0, boundary);
-        buffer = buffer.slice(boundary + 2);
-
-        let eventName = "message";
-        const dataLines: string[] = [];
-        for (const line of rawEvent.split("\n")) {
-          if (line.startsWith("event:")) {
-            eventName = line.slice(6).trim();
-          } else if (line.startsWith("data:")) {
-            dataLines.push(line.slice(5).trim());
-          }
+  await consumeSSE(
+    `/chat/stream${buildQuery({ project_id: projectId })}`,
+    { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) },
+    {
+      onEvent: (eventName, dataRaw) => {
+        let parsed: unknown;
+        try {
+          parsed = JSON.parse(dataRaw);
+        } catch {
+          return;
         }
-        dispatch(eventName, dataLines.join("\n"));
-        boundary = buffer.indexOf("\n\n");
-      }
-    }
-  } catch (error) {
-    if ((error as Error).name !== "AbortError") {
-      handlers.onError?.(error as Error);
-    }
-    throw error;
-  }
+        if (eventName === "conversation") {
+          handlers.onConversation?.((parsed as { conversation_id: string }).conversation_id);
+        } else if (eventName === "node") {
+          handlers.onNode?.((parsed as { node: string }).node);
+        } else if (eventName === "final") {
+          receivedFinal = true;
+          handlers.onFinal?.(parsed as ChatResponse);
+        }
+      },
+      onError: handlers.onError,
+    },
+    signal
+  );
 
   // The HTTP response starts (200 + headers) before the graph runs, so a
   // failure mid-stream (e.g. Qdrant/Neo4j unreachable) closes the

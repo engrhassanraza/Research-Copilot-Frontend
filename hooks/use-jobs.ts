@@ -14,7 +14,11 @@ export function useJob(id: string | null, projectId: string | null) {
     enabled: !!id && !!projectId,
     refetchInterval: (query) => {
       const status = query.state.data?.status;
-      return status && TERMINAL.includes(status) ? false : 3000;
+      if (status && TERMINAL.includes(status)) return false;
+      // Deep Research appends to an events array rather than overwriting a
+      // single {step, total} snapshot — poll faster so the Research
+      // Timeline reads as live.
+      return query.state.data?.job_type === "deep_research" ? 1500 : 3000;
     },
   });
 }

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { FileSearch, Network, ShieldCheck } from "lucide-react";
+import { FileSearch, GraduationCap, Network, ShieldCheck } from "lucide-react";
 
 import { ConversationRail } from "@/components/dashboard/chat/conversation-rail";
 import { EvidencePanel } from "@/components/dashboard/chat/evidence-panel";
@@ -32,6 +33,8 @@ function tempId() {
 
 export function ChatView() {
   const { activeProjectId, isLoading: projectsLoading, projects } = useActiveProject();
+  const searchParams = useSearchParams();
+  const learnMode = searchParams.get("mode") === "learn";
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<LocalMessage[]>([]);
   const [input, setInput] = useState("");
@@ -88,6 +91,8 @@ export function ChatView() {
         evidence: response.evidence,
         sources: response.sources,
         verification: response.verification,
+        routing: response.routing,
+        qualityScore: response.quality_score,
         pipeline: finishedPipeline,
         streaming: false,
         createdAt: Date.now(),
@@ -122,10 +127,18 @@ export function ChatView() {
   }, [messages, livePipeline]);
 
   function handleSend(overrideText?: string) {
-    const text = (overrideText ?? input).trim();
-    if (!activeProjectId || !text || isStreaming) return;
+    const raw = (overrideText ?? input).trim();
+    if (!activeProjectId || !raw || isStreaming) return;
 
-    const userMessage: LocalMessage = { id: tempId(), role: "user", content: text, streaming: false, createdAt: Date.now() };
+    // Learn a Topic (landing page mode) reuses the plain chat pipeline —
+    // no dedicated backend mode — by prefixing a pedagogical instruction
+    // before sending, while the user's bubble still shows just the topic
+    // they typed.
+    const outgoing = learnMode
+      ? `Explain "${raw}" from the ground up: define the key concepts, walk through the core methods, and show how they connect. Assume I'm new to this topic.`
+      : raw;
+
+    const userMessage: LocalMessage = { id: tempId(), role: "user", content: raw, streaming: false, createdAt: Date.now() };
     const assistantPlaceholder: LocalMessage = {
       id: tempId(),
       role: "assistant",
@@ -136,7 +149,7 @@ export function ChatView() {
     };
     setMessages((prev) => [...prev, userMessage, assistantPlaceholder]);
     setInput("");
-    sendMessage({ projectId: activeProjectId, conversationId, message: text, citationStyle });
+    sendMessage({ projectId: activeProjectId, conversationId, message: outgoing, citationStyle });
   }
 
   function handleStop() {
@@ -207,29 +220,51 @@ export function ChatView() {
             />
             <div className="relative flex flex-col items-center text-center">
               <div className="glow-orb h-24 w-24 rounded-full shadow-2xl shadow-violet-950/50 animate-float" />
-              <h1 className="mt-8 text-2xl font-semibold tracking-tight sm:text-3xl">
-                Ready to start your research?
-              </h1>
-              <p className="mt-2 max-w-md text-sm text-muted-foreground">
-                Upload a paper, ask a question, or pick up a conversation — every answer comes
-                with citations you can check and a live look at the agents behind it.
-              </p>
+              {learnMode ? (
+                <>
+                  <div className="mt-8 flex items-center gap-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+                    <GraduationCap className="h-6 w-6 text-violet-500" />
+                    What do you want to learn?
+                  </div>
+                  <p className="mt-2 max-w-md text-sm text-muted-foreground">
+                    Type a topic and get a structured, ground-up explanation — key concepts, core methods, and how they connect.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h1 className="mt-8 text-2xl font-semibold tracking-tight sm:text-3xl">
+                    Ready to start your research?
+                  </h1>
+                  <p className="mt-2 max-w-md text-sm text-muted-foreground">
+                    Upload a paper, ask a question, or pick up a conversation — every answer comes
+                    with citations you can check and a live look at the agents behind it.
+                  </p>
+                </>
+              )}
             </div>
 
             <div className="relative mt-10 w-full max-w-2xl">
-              <PromptComposer value={input} onChange={setInput} onSend={() => handleSend()} isStreaming={isStreaming} />
-              <div className="mt-4 flex flex-wrap justify-center gap-2">
-                {SUGGESTIONS.map((suggestion) => (
-                  <button
-                    key={suggestion.label}
-                    onClick={() => handleSend(suggestion.label)}
-                    className="flex items-center gap-2 rounded-full border border-border/60 bg-secondary/40 px-3.5 py-2 text-xs text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-foreground"
-                  >
-                    <suggestion.icon className="h-3.5 w-3.5" />
-                    {suggestion.label}
-                  </button>
-                ))}
-              </div>
+              <PromptComposer
+                value={input}
+                onChange={setInput}
+                onSend={() => handleSend()}
+                isStreaming={isStreaming}
+                placeholder={learnMode ? "e.g. transformer attention mechanisms" : undefined}
+              />
+              {!learnMode && (
+                <div className="mt-4 flex flex-wrap justify-center gap-2">
+                  {SUGGESTIONS.map((suggestion) => (
+                    <button
+                      key={suggestion.label}
+                      onClick={() => handleSend(suggestion.label)}
+                      className="flex items-center gap-2 rounded-full border border-border/60 bg-secondary/40 px-3.5 py-2 text-xs text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-foreground"
+                    >
+                      <suggestion.icon className="h-3.5 w-3.5" />
+                      {suggestion.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         ) : (

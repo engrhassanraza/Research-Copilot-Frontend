@@ -4,6 +4,7 @@ import { ImageOff } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { QueryError } from "@/components/dashboard/query-error";
+import { FigureDiagramStream } from "@/components/dashboard/figures/figure-diagram-stream";
 import { useFigures } from "@/hooks/use-figures";
 import { useDocuments } from "@/hooks/use-documents";
 
@@ -48,6 +49,9 @@ export function FiguresGallery({ projectId }: { projectId: string }) {
               {figure.vision_description && (
                 <p className="mt-1 line-clamp-3 text-[11px] italic text-muted-foreground/80">{figure.vision_description}</p>
               )}
+              <div className="mt-2">
+                <FigureDiagramStream figureId={figure.id} projectId={projectId} />
+              </div>
             </div>
           </div>
         );

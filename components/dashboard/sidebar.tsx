@@ -13,6 +13,7 @@ import {
   ImageIcon,
   Lightbulb,
   MessageSquare,
+  Microscope,
   Network,
   Search,
   Sparkles,
@@ -50,6 +51,7 @@ const NAV_SECTIONS = [
   {
     label: "Insights",
     items: [
+      { label: "Deep research", href: "/dashboard/deep-research", icon: Microscope },
       { label: "Knowledge graph", href: "/dashboard/graph", icon: Network },
       { label: "Knowledge map", href: "/dashboard/map", icon: Workflow },
       { label: "Comparisons", href: "/dashboard/comparisons", icon: GitCompareArrows },

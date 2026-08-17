@@ -14,8 +14,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AgentPipeline } from "@/components/dashboard/chat/agent-pipeline";
 import { CitationMarkdown } from "@/components/dashboard/chat/citation-markdown";
+import { RoutingDecisionPanel } from "@/components/dashboard/chat/routing-decision";
 import { SourceList } from "@/components/dashboard/chat/source-list";
 import { VerificationPanel } from "@/components/dashboard/chat/verification-panel";
+import { QualityScorePanel } from "@/components/dashboard/quality-score-panel";
 import type { LocalMessage } from "@/components/dashboard/chat/types";
 import { useCreateExport } from "@/hooks/use-exports";
 import { useChatStore } from "@/stores/chat-store";
@@ -103,7 +105,12 @@ export function MessageBubble({
               <SourceList sources={message.sources} projectId={projectId} />
             )}
             {!message.streaming && <VerificationPanel verification={message.verification} />}
+            {!message.streaming && <RoutingDecisionPanel routing={message.routing} />}
           </div>
+        )}
+
+        {!message.streaming && message.qualityScore && (
+          <QualityScorePanel score={message.qualityScore} className="mt-1" />
         )}
 
         {!message.streaming && message.content && (

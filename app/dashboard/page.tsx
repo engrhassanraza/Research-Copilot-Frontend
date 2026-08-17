@@ -1,5 +1,11 @@
+import { Suspense } from "react";
+
 import { ChatView } from "@/components/dashboard/chat/chat-view";
 
 export default function DashboardPage() {
-  return <ChatView />;
+  return (
+    <Suspense fallback={null}>
+      <ChatView />
+    </Suspense>
+  );
 }

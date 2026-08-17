@@ -164,6 +164,8 @@ export interface ChatResponse {
   sources: ChatSource[];
   knowledge_graph: { research_gaps?: ResearchGap[] } & Record<string, unknown>;
   verification: VerificationOutput | null;
+  routing: RoutingDecision | null;
+  quality_score: QualityScore | null;
 }
 
 export type AgentNode =
@@ -312,7 +314,8 @@ export type JobType =
   | "document_processing"
   | "comparison"
   | "literature_review"
-  | "research_gap";
+  | "research_gap"
+  | "deep_research";
 
 export interface Job {
   id: UUID;
@@ -464,4 +467,62 @@ export interface RetrievalSummary {
 export interface Analytics {
   model_usage: ModelUsageSummary[];
   retrieval: RetrievalSummary;
+  total_estimated_savings_usd: number;
+  routed_calls_with_alternative: number;
+}
+
+// ---------------------------------------------------------------------------
+// LLM Router decision + Research Quality Score
+// ---------------------------------------------------------------------------
+
+export interface RoutingDecision {
+  provider: string;
+  model: string;
+  reason: string;
+  estimated_cost_usd: number | null;
+  alternative_provider: string | null;
+  alternative_model: string | null;
+  alternative_cost_usd: number | null;
+  estimated_savings_pct: number | null;
+}
+
+export interface QualityScore {
+  citation_coverage: number;
+  evidence_support: number;
+  source_diversity: number;
+  contradiction_handling: number;
+  retrieval_quality: number;
+  hallucination_risk: number;
+  overall: number;
+  summary: string;
+}
+
+// ---------------------------------------------------------------------------
+// Deep Research (Supervisor + parallel Workers, contradiction detection)
+// ---------------------------------------------------------------------------
+
+export type TimelineEventKind = "info" | "worker" | "warning" | "success";
+
+export interface TimelineEvent {
+  at: string;
+  message: string;
+  kind: TimelineEventKind;
+}
+
+export interface DetectedContradiction {
+  finding_id_a: string;
+  finding_id_b: string;
+  reason: string;
+  severity: "low" | "medium" | "high";
+  resolved: boolean;
+  resolution_summary: string | null;
+}
+
+export interface DeepResearchProgress {
+  events: TimelineEvent[];
+  quality_score?: QualityScore;
+  contradictions?: DetectedContradiction[];
+  routing?: RoutingDecision;
+  worker_count?: number;
+  sub_questions?: string[];
 }
