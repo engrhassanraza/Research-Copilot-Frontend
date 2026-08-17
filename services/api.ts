@@ -68,7 +68,6 @@ export async function apiFetch<T>(path: string, init: ApiFetchInit = {}): Promis
     try {
       detail = await response.json();
     } catch {
-      // non-JSON error body
     }
     const message = detail && typeof detail === "object" && "detail" in detail
       ? extractMessage((detail as { detail: unknown }).detail)

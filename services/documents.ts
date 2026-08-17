@@ -1,7 +1,7 @@
 import { apiFetch, buildQuery } from "@/services/api";
 import type { Document, JobRef } from "@/types/api";
 
-export const MAX_UPLOAD_BYTES = 50 * 1024 * 1024; // 50MB
+export const MAX_UPLOAD_BYTES = 50 * 1024 * 1024;
 
 export function listDocuments(projectId: string, params: { limit?: number; offset?: number } = {}) {
   return apiFetch<Document[]>(`/documents${buildQuery({ project_id: projectId, ...params })}`);

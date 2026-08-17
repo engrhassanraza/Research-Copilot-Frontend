@@ -6,13 +6,7 @@ export interface SSEHandlers {
   onError?: (error: Error) => void;
 }
 
-/**
- * Hand-rolled SSE parser over `fetch` — not the browser's `EventSource`,
- * which can't send a POST body or a custom `Authorization` header, both of
- * which this API's streaming endpoints require. Shared by chat streaming
- * (`services/chat.ts`) and the figure-diagram render-verify stream
- * (`components/dashboard/figures/figure-diagram-stream.tsx`).
- */
+// Hand-rolled over `fetch` since `EventSource` can't send a POST body or Authorization header.
 export async function consumeSSE(path: string, init: RequestInit, handlers: SSEHandlers, signal?: AbortSignal): Promise<void> {
   const token = useAuthStore.getState().token;
 

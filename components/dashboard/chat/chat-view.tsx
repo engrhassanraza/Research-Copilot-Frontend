@@ -75,7 +75,7 @@ export function ChatView() {
         if (lastAssistant) assistantMessageId = lastAssistant.id;
       }
     } catch {
-      // fall back to the temp id — export will ask the user to retry
+      // fall back to temp id; user can retry export
     }
 
     const finishedPipeline = useChatStore.getState().pipeline;
@@ -108,8 +108,7 @@ export function ChatView() {
     seededFor.current = resolvedConversationId;
     queryClient.invalidateQueries({ queryKey: ["conversations", activeProjectId] });
   }, (errorMessage) => {
-    // The toast already surfaced this — finalize the stuck placeholder
-    // bubble so it doesn't sit frozen mid-"streaming" forever.
+    // Toast already shown; finalize the placeholder so it doesn't stay stuck "streaming".
     setMessages((prev) => {
       const next = [...prev];
       const idx = next.findIndex((m) => m.streaming);
@@ -143,10 +142,7 @@ export function ChatView() {
     };
     setMessages((prev) => [...prev, userMessage, assistantPlaceholder]);
     setInput("");
-    // Learn a Topic (landing page mode): send the topic as-is plus an
-    // explicit mode, and let the backend's Explainer agent handle the
-    // pedagogical framing — previously this prefixed a client-side
-    // instruction string onto the message with no backend awareness at all.
+    // Learn mode: send topic as-is with an explicit mode flag; backend Explainer agent handles framing.
     sendMessage({
       projectId: activeProjectId,
       conversationId,

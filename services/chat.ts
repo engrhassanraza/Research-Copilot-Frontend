@@ -7,10 +7,7 @@ export interface ChatRequestBody {
   conversation_id?: string | null;
   message: string;
   citation_style?: CitationStyle;
-  // Orchestrator mode override — omit to let the backend auto-classify.
-  // domain_filter has no dedicated UI control yet (no domain taxonomy
-  // exists in the product today); the field is plumbed through so a
-  // caller can pass one once that UI exists.
+  // mode: orchestrator override, omit to auto-classify. domain_filter: plumbed through, no UI yet.
   mode?: ChatMode;
   domain_filter?: string;
 }
@@ -86,12 +83,7 @@ export async function streamChat(
     signal
   );
 
-  // The HTTP response starts (200 + headers) before the graph runs, so a
-  // failure mid-stream (e.g. Qdrant/Neo4j unreachable) closes the
-  // connection cleanly from the server's side rather than surfacing as an
-  // HTTP error — `reader.read()` just resolves `done: true` with no
-  // exception. Without this check the caller sees a silently "successful"
-  // stream that never produced an answer, leaving the UI stuck streaming.
+  // Mid-stream failures close the connection cleanly (no HTTP error), so detect a missing "final" event explicitly.
   if (!receivedFinal) {
     const error = new Error("The connection closed before the assistant finished responding. Please try again.");
     handlers.onError?.(error);

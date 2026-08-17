@@ -5,8 +5,7 @@ import { useEffect, useRef } from "react";
 import { useJob } from "@/hooks/use-jobs";
 import type { Job } from "@/types/api";
 
-/** Invisible poller: watches one job to terminal status, then fires a
- * one-time callback (used to toast + clean up the "processing" list). */
+// Invisible poller: watches one job to terminal status, then fires a one-time callback.
 export function JobWatcher({
   jobId,
   projectId,

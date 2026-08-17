@@ -1,10 +1,6 @@
 import type { ImgHTMLAttributes } from "react";
 
-/**
- * Brand mark used everywhere in the UI (nav, sidebar, footer, auth header).
- * Renders `/public/logo.svg` — the same artwork served as the favicon via
- * `app/icon.svg` — so the icon is guaranteed identical across every surface.
- */
+// Shares /public/logo.svg with app/icon.svg so the favicon and UI logo stay identical.
 export function LogoBadge({
   alt = "Research Copilot",
   ...props

@@ -4,9 +4,7 @@ import { Bar, BarChart, CartesianGrid, Cell, LabelList, ResponsiveContainer, Too
 
 import type { ModelUsageSummary } from "@/types/api";
 
-// dataviz skill's validated 8-slot categorical order (dark-surface steps —
-// this app is dark-by-default and the hues stay legible on the light card
-// surface too).
+// Validated 8-slot categorical order; legible on both dark and light surfaces.
 const CATEGORICAL = ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#008300", "#9085e9", "#e66767"];
 
 export function CostChart({ data }: { data: ModelUsageSummary[] }) {

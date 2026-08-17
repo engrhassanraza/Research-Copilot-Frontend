@@ -1,13 +1,7 @@
 import type { Citation } from "@/types/api";
 
-/**
- * The chat answer contains literal `[n]`-style marker text already
- * formatted server-side (instruction.md §5, Chat). This walks the
- * `citations` array in order and rewrites each marker's *next* unclaimed
- * occurrence in the text into a markdown link (`[marker](#cite-i)`) so
- * `CitationMarkdown`'s custom `a` renderer can turn it into a clickable
- * evidence trigger while everything else renders as normal markdown.
- */
+// Rewrites each citation's next unclaimed `[n]` marker occurrence into a
+// markdown link so CitationMarkdown's `a` renderer can make it clickable.
 export function injectCitationLinks(answer: string, citations: Citation[]): string {
   let result = answer;
   const searchFrom: Record<string, number> = {};

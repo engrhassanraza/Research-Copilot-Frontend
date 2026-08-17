@@ -5,8 +5,7 @@ function lastName(name: string): string {
   return parts[parts.length - 1] || name;
 }
 
-// Short display label for a citation chip while editing — not a style-
-// accurate marker (that's computed at export time; see citation-node.ts).
+// Display label only, not a style-accurate marker (that's computed at export time).
 export function referenceLabel(reference: Reference): string {
   const authors = reference.authors ?? [];
   let authorPart = "";

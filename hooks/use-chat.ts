@@ -47,11 +47,7 @@ export function useChatStream(
               queryClient.invalidateQueries({ queryKey: ["conversations", projectId] });
               onFinal?.(response, resolvedConversationId || response.conversation_id);
             },
-            // Deliberately no onError here — every error path in streamChat
-            // (connect failure, non-2xx, mid-stream break, no `final`
-            // received) re-throws, so the single catch below is the one
-            // place that reacts. Handling it here too would double-fire
-            // the toast and the store update.
+            // No onError: streamChat always re-throws, so the catch below is the single place that reacts.
           },
           controller.signal
         );

@@ -1,6 +1,4 @@
-// Hand-written TS interfaces mirroring the backend's Pydantic response
-// models exactly (see Research-Copilot-Frontend/instruction.md §5). Field
-// names are never renamed from the backend shape.
+// Mirrors backend Pydantic response models exactly (instruction.md §5); field names never renamed.
 
 export type UUID = string;
 
@@ -159,9 +157,7 @@ export interface EvidenceBlock {
 // Orchestrator-resolved mode (Aligned Multi-Agent Architecture proposal §2).
 export type ChatMode = "deep_research" | "learn" | "query_kb" | "visual";
 
-// Visual agent's draw-mode result (app/exports/diagrams.py's
-// generate_verified_mermaid, surfaced via ChatResponse.diagram when the
-// Explainer agent attaches a concept-progression diagram).
+// Visual agent's draw-mode result, surfaced via ChatResponse.diagram (app/exports/diagrams.py generate_verified_mermaid).
 export interface DiagramResult {
   source: string;
   valid: boolean;

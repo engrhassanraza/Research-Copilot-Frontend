@@ -1,20 +1,18 @@
 import type { EntityLabel } from "@/types/api";
 
-// Categorical hues (dataviz skill's validated 8-slot set, extended with 3
-// more distinguishable hues since the graph has 11 entity types) — paired
-// with a distinct icon per type so color is never the only signal.
+// Validated 8-slot categorical set extended with 3 more hues for the graph's 11 entity types.
 export const ENTITY_COLORS: Record<EntityLabel, string> = {
-  Paper: "#3987e5", // blue
-  Author: "#e66767", // red
-  Method: "#199e70", // aqua
-  Dataset: "#d95926", // orange
-  Model: "#9085e9", // violet
-  Task: "#c98500", // yellow
-  Metric: "#d55181", // magenta
-  Finding: "#22a06b", // green
-  Limitation: "#9ca3af", // slate
-  ResearchGap: "#fb7185", // rose
-  Topic: "#818cf8", // indigo
+  Paper: "#3987e5",
+  Author: "#e66767",
+  Method: "#199e70",
+  Dataset: "#d95926",
+  Model: "#9085e9",
+  Task: "#c98500",
+  Metric: "#d55181",
+  Finding: "#22a06b",
+  Limitation: "#9ca3af",
+  ResearchGap: "#fb7185",
+  Topic: "#818cf8",
 };
 
 export function entityColor(label: string): string {

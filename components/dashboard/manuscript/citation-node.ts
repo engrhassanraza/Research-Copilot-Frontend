@@ -13,12 +13,7 @@ declare module "@tiptap/core" {
   }
 }
 
-// Inline atom node for an in-text citation. `label` is a display hint
-// captured at insert time (e.g. "[Smith, 2023]") — the authoritative,
-// per-style numbered marker is only ever computed at export time by the
-// backend (`app.exports.manuscript_convert.tiptap_to_sections`), matching
-// how every other export path in this app never persists a rendered
-// "[n]" marker (instruction.md §27).
+// `label` is just a display hint; the real per-style marker is computed at export time by the backend.
 export const Citation = Node.create({
   name: "citation",
   group: "inline",

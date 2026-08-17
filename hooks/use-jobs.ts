@@ -15,9 +15,7 @@ export function useJob(id: string | null, projectId: string | null) {
     refetchInterval: (query) => {
       const status = query.state.data?.status;
       if (status && TERMINAL.includes(status)) return false;
-      // Deep Research appends to an events array rather than overwriting a
-      // single {step, total} snapshot — poll faster so the Research
-      // Timeline reads as live.
+      // Deep Research streams an events array — poll faster to keep the Research Timeline feeling live.
       return query.state.data?.job_type === "deep_research" ? 1500 : 3000;
     },
   });

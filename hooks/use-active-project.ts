@@ -5,8 +5,6 @@ import { useEffect } from "react";
 import { useProjects } from "@/hooks/use-projects";
 import { useProjectStore } from "@/stores/project-store";
 
-/** Resolves the active project id, auto-selecting the first project when
- * none is selected yet (or the persisted selection no longer exists). */
 export function useActiveProject() {
   const { data: projects, isLoading } = useProjects();
   const activeProjectId = useProjectStore((s) => s.activeProjectId);

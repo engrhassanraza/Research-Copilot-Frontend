@@ -28,8 +28,7 @@ export const AGENT_NODE_META: Record<string, AgentNodeMeta> = {
   graph_context: { label: "Querying knowledge graph", description: "Pulling entity relationships", icon: Network },
   research_analysis: { label: "Analyzing findings", description: "Synthesizing across papers", icon: Microscope },
   research_gap: { label: "Finding research gaps", description: "Spotting open problems", icon: Lightbulb },
-  // Draft -> Cite -> Verify -> Format all run as one Writing agent step now
-  // (citation/verification are no longer separate graph nodes).
+  // Draft/cite/verify/format now run as one Writing agent step, not separate nodes.
   writing: { label: "Writing, citing & verifying", description: "Drafting, citing, and cross-checking the answer", icon: PenLine },
   explain: { label: "Explaining", description: "Building a ground-up walkthrough", icon: GraduationCap },
   quality_score: { label: "Scoring quality", description: "Computing the Research Quality Score", icon: Gauge },
