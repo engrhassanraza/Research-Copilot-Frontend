@@ -1,13 +1,14 @@
 import {
+  ArrowRight,
   BarChart3,
   Bot,
-  Database,
-  FileDown,
+  ImageIcon,
   PenSquare,
   Quote,
+  Route,
   Search,
   ShieldCheck,
-  Target,
+  Sparkles,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -15,46 +16,56 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 
 const AGENTS = [
   {
-    icon: Search,
-    name: "Research Search Agent",
-    description: "Discovers and collects relevant papers and sources.",
+    icon: Route,
+    name: "Router Agent",
+    description:
+      "Classifies each turn's intent and complexity, then decides whether retrieval, web search, vision, or the knowledge graph are needed.",
   },
   {
-    icon: Database,
+    icon: Search,
     name: "Retrieval Agent",
-    description: "Retrieves relevant chunks, tables, figures, and context.",
+    description:
+      "Runs hybrid search: sparse BM25 and dense vectors fused with RRF in Qdrant, then reranked with a cross-encoder.",
+  },
+  {
+    icon: Sparkles,
+    name: "Search Agent",
+    description:
+      "Discovers new papers from arXiv, Semantic Scholar, and other providers when a question needs sources beyond your library.",
+  },
+  {
+    icon: ImageIcon,
+    name: "Visual Agent",
+    description:
+      "Reads the vision-parsed analysis of figures, tables, and equations captured at ingestion, and renders diagrams on request.",
   },
   {
     icon: BarChart3,
-    name: "Analysis Agent",
-    description: "Analyzes content, extracts insights, compares methods.",
-  },
-  {
-    icon: Target,
-    name: "Gap Detection Agent",
-    description: "Identifies research gaps, limitations, and future directions.",
+    name: "Research Analysis Agent",
+    description:
+      "Extracts findings, methods, and limitations from retrieved evidence, and surfaces gaps and contradictions across sources.",
   },
   {
     icon: PenSquare,
     name: "Writing Agent",
-    description: "Generates literature reviews, sections, and summaries.",
+    description:
+      "Drafts the answer from evidence, then runs Cite, Verify, and Format as internal steps before it reaches you.",
   },
   {
     icon: Quote,
     name: "Citation Agent",
-    description: "Manages citations, references, and formatting.",
+    description:
+      "A deterministic step that resolves every claim's evidence into reference entries and citation markers.",
   },
   {
     icon: ShieldCheck,
     name: "Verification Agent",
-    description: "Fact-checks claims, validates sources, flags hallucinations.",
-  },
-  {
-    icon: FileDown,
-    name: "Export Agent",
-    description: "Generates a fully cited Word doc, PDF, figures, and references.",
+    description:
+      "Re-reads every drafted claim against its cited evidence and flags anything unsupported or contradicted.",
   },
 ];
+
+const FLOW = ["Router", "Retrieval", "Analysis", "Writing", "Cite", "Verify"];
 
 export function Agents() {
   return (
@@ -73,9 +84,9 @@ export function Agents() {
             Eight agents, one LangGraph pipeline
           </h2>
           <p className="mt-4 text-muted-foreground">
-            Specialized agents coordinate through shared memory and
-            orchestration — conversation state, evidence, and tool calls stay
-            in sync from the first search to the final export.
+            Specialized agents coordinate through a request-scoped LangGraph.
+            A router decides what is needed, evidence gathers in shared
+            state, and every claim is verified before it reaches you.
           </p>
         </div>
 
@@ -94,6 +105,24 @@ export function Agents() {
               </CardHeader>
             </Card>
           ))}
+        </div>
+
+        <div className="mt-14">
+          <p className="text-center text-xs font-medium tracking-wider text-muted-foreground">
+            HOW A TURN FLOWS THROUGH THE PIPELINE
+          </p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-2 gap-y-3">
+            {FLOW.map((stage, i) => (
+              <div key={stage} className="flex items-center gap-2">
+                <span className="glass rounded-full border-border/50 px-4 py-2 text-sm font-medium">
+                  {stage}
+                </span>
+                {i < FLOW.length - 1 && (
+                  <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

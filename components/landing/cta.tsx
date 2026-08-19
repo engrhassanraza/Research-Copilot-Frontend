@@ -17,7 +17,7 @@ export function Cta() {
               Ready to accelerate your research?
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-              Upload your first paper and ask a question — Research Copilot
+              Upload your first paper and ask a question. Research Copilot
               handles retrieval, verification, and citations end to end.
             </p>
             <div className="mt-8 flex justify-center">

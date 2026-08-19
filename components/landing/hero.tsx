@@ -7,11 +7,7 @@ import {
   Database,
   GraduationCap,
   Globe,
-  ImageIcon,
   Link2,
-  type LucideIcon,
-  MessageSquare,
-  Microscope,
   Network,
   Sparkles,
   Stethoscope,
@@ -20,13 +16,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LogoLoop, type LogoItem } from "@/components/landing/logo-loop";
-
-const MODES: { label: string; description: string; href: string; icon: LucideIcon }[] = [
-  { label: "Deep Research", description: "Supervisor + parallel workers, contradictions resolved", href: "/dashboard/deep-research", icon: Microscope },
-  { label: "Learn a Topic", description: "Guided, ground-up explanations", href: "/dashboard?mode=learn", icon: GraduationCap },
-  { label: "Query My Papers", description: "Chat over your library, fully cited", href: "/dashboard", icon: MessageSquare },
-  { label: "Draw / Interpret a Figure", description: "Vision-aware diagram generation", href: "/dashboard/figures", icon: ImageIcon },
-];
 
 const SOURCE_LOGOS: LogoItem[] = [
   {
@@ -125,24 +114,6 @@ export function Hero() {
               <Link href="#how-it-works">See how it works</Link>
             </Button>
           </div>
-
-          <div className="mt-8 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-            {MODES.map((mode) => (
-              <Link
-                key={mode.label}
-                href={mode.href}
-                className="glass group flex items-start gap-3 rounded-2xl border-border/50 p-3.5 transition-colors hover:border-violet-400/40"
-              >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-violet-600 transition-colors group-hover:bg-primary/25 dark:text-violet-300">
-                  <mode.icon className="h-4.5 w-4.5" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium leading-tight">{mode.label}</p>
-                  <p className="mt-0.5 text-xs leading-snug text-muted-foreground">{mode.description}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
         </div>
 
         <div className="relative mx-auto flex w-full max-w-md items-center justify-center py-14 lg:mx-0 lg:ml-auto">
@@ -199,7 +170,7 @@ export function Hero() {
                 </span>
               </div>
               <p className="mt-1 text-lg font-semibold tracking-tight">
-                8 specialized
+                9 specialized
               </p>
             </div>
 

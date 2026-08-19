@@ -27,14 +27,14 @@ const STEPS = [
     icon: Bot,
     title: "Agents reason together",
     description:
-      "A LangGraph multi-agent system searches, analyzes, writes, and verifies — coordinated through shared memory and orchestration.",
+      "A LangGraph multi-agent system searches, analyzes, writes, and verifies, coordinated through shared memory and orchestration.",
   },
   {
     step: "05",
     icon: FileCheck2,
     title: "Get a verified answer",
     description:
-      "Chat, literature reviews, knowledge maps, and fully cited exports — every claim traceable back to a page and paragraph.",
+      "Chat, literature reviews, knowledge maps, and fully cited exports, every claim traceable back to a page and paragraph.",
   },
 ];
 

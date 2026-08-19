@@ -43,6 +43,14 @@ const TEAM: TeamMember[] = [
     email: "soobanwarraich786@gmail.com",
     github: "https://github.com/soobanwarraich",
   },
+  {
+    initials: "AG",
+    name: "Ahmad Gafoor",
+    role: "Team Member",
+    bio: "Collaborating across the stack to build and ship core Research Copilot features.",
+    email: "ahmadsilver28@gmail.com",
+    github: "https://github.com/ahmad-27-robin",
+  },
 ];
 
 export function AboutTeam() {

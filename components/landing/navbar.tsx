@@ -5,7 +5,7 @@ import { LogoBadge } from "@/components/brand/logo-badge";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV_LINKS = [
-  { label: "Product", href: "/#features" },
+  { label: "Product", href: "/#product" },
   { label: "How it works", href: "/#how-it-works" },
   { label: "Agents", href: "/#agents" },
   { label: "About", href: "/about" },

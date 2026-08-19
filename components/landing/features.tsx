@@ -32,7 +32,7 @@ const FEATURES = [
     icon: Workflow,
     title: "Multi-agent pipeline",
     description:
-      "Search, Retrieval, Research, Vision, Writing, and Citation agents coordinate through a LangGraph router.",
+      "A router, retrieval, search, vision, analysis, and writing agent coordinate through a request-scoped LangGraph, with citation and verification as built-in steps of every answer.",
   },
   {
     icon: Sparkles,
